@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles } from '@material-ui/core/styles';
 import withRoot from '../withRoot';
 
+import classNames from "classnames"
 
 const weatherIconMap = {
   "clear-day":"wi wi-day-sunny",
@@ -32,11 +33,25 @@ const styles = theme => ({
     justifyContent:"space-between"
   },
   column:{
+    position:"relative",
     display:"flex",
     flexDirection:"column",
     justifyContent:"space-around",
     alignItems:"space-around",
     flex: 1,
+  },
+  active:{
+    justifyContent: "center",
+    color: theme.palette.primary.main
+  },
+  divider:{
+    position: "absolute",
+    top: 16,
+    bottom: 16,
+    right: 0,
+    width: 1,
+
+    background: theme.palette.primary.main
   }
 });
 
@@ -53,44 +68,71 @@ class WeatherBar extends React.Component {
   render() {
     const { classes } = this.props;
     const { weatherData } = this.state
+    let index = 0
+    if(weatherData){
+      return (
+        <div className={classes.root}>
+          <Grid container justify="space-between">
+            <Grid  item md={2} className={classNames(classes.column, classes.active)}>
+              <div style={{textAlign:"center", fontSize: 80, paddingBottom: 8}}>
+                {
+                  Object.keys(weatherIconMap).map((key, i)=>{
+                    if(key === weatherData.currently.icon){
+                      return(
+                        <i key={i} className={weatherIconMap[key]}></i>
+                      )
+                    }
+                  })
+                }
+              </div>
+              <Typography variant="h2" align="center" style={{fontWeight: 400}}>
+                {
+                  Math.floor((weatherData.currently.temperature-32)/(9/5))
+                }&deg;C
+              </Typography>
+              <div className={classes.divider}></div>
+            </Grid>
+            {
+               weatherData.hourly.data.map((data, i)=>{
+                let timestamp = new Date(parseInt(data.time)*1000)
 
-    return (
-      <div className={classes.root} >
-        <Grid container justify="space-between">
-          {
-            weatherData && weatherData.hourly.data.map((data, i)=>{
-              let timestamp = new Date(parseInt(data.time)*1000)
-              if( moment(timestamp).isSameOrAfter(Date.now()) && moment(timestamp).isSameOrBefore(moment(Date.now()).add(1,'day')) && moment(timestamp).hour()%3===0){
-                return(
-                  <Grid  item md={1} key={i} className={classes.column}>
+                if( moment(timestamp).isSameOrAfter(Date.now()) && moment(timestamp).isSameOrBefore(moment(Date.now()).add(1,'day')) && moment(timestamp).hour() % 5 ===0){
+                  index = index + 1
+                  if(index !== 1){
+                    return(
+                      <Grid  item md={1} key={i} className={classes.column}>
 
-                      <Typography variant="h5" align="center">{moment(timestamp).format('HH:mm')}</Typography>
+                        <Typography variant="h6" align="center" >{moment(timestamp).format('HH:mm')}</Typography>
 
-                      <Typography variant="h4" align="center">
-                        {
-                          Math.floor((data.temperature-32)/(9/5))
-                        }&deg;C
-                      </Typography>
-                      <div style={{textAlign:"center", fontSize:30}}>
-                        {
-                          Object.keys(weatherIconMap).map((key, i)=>{
-                            if(key === data.icon){
-                              return(
-                                <i key={i} className={weatherIconMap[key]}></i>
-                              )
-                            }
-                          })
-                        }
-                      </div>
-                  </Grid>
-                )
-              }
-            })
-          }
-        </Grid>
+                        <div style={{textAlign:"center", fontSize:50}}>
+                          {
+                            Object.keys(weatherIconMap).map((key, i)=>{
+                              if(key === data.icon){
+                                return(
+                                  <i key={i} className={weatherIconMap[key]}></i>
+                                )
+                              }
+                            })
+                          }
+                        </div>
+                        <Typography variant="h4" align="center">
+                          {
+                            Math.floor((data.temperature-32)/(9/5))
+                          }&deg;C
+                        </Typography>
+                        { index !== 5 && <div className={classes.divider}></div>}
+                      </Grid>
+                    )
+                  }
+                }
+              })
+            }
+          </Grid>
 
-      </div>
-    );
+        </div>
+      );
+    }else return null
+
   }
 }
 

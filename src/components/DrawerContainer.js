@@ -19,7 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
-const drawerWidth = "50%";
+const drawerWidth = "65%";
 
 const styles = theme => ({
 
@@ -87,7 +87,7 @@ class DrawerContainer extends React.Component {
 
 
         >
-
+          {this.props.children}
         </Drawer>
 
     );

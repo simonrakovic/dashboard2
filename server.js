@@ -11,9 +11,10 @@ var fs = require('fs')
 
 var ipcamera	= require('./hikvision');
 var Scheduler = require('./scheduler')
+require('./rtspStreamServer')
 
 var SSE = require('express-sse');
-var sse = new SSE(["array", "containing", "initial", "content", "(optional)"]);
+var sse = new SSE();
 
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -53,7 +54,7 @@ router.get('/camera/alarm/stream', sse.init);
 
 
 try{
-	/*
+
 	//initialize connection to hikvision camera alarm stream
 	var options = {
 		host	: '192.168.0.220',
@@ -69,7 +70,7 @@ try{
 			sse.send({active:true});
 		}
 	});
-	*/
+
 }catch(e){
 	console.log(e)
 }
