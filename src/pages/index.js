@@ -77,13 +77,16 @@ class Index extends React.Component {
     let eventSource = new EventSource('/api/camera/alarm/stream');
     eventSource.onmessage = message => {
       let data = JSON.parse(message.data)
-      let closeCameraDrawerFunction = this.state.closeCameraDrawerFunction
-      if(data.active && !this.state.cameraDrawerState){
 
+      let closeCameraDrawerFunction = this.state.closeCameraDrawerFunction
+      console.log("cameraActive1", data, this.state.cameraDrawerState)
+      if(data.active && !this.state.cameraDrawerState){
+        console.log("cameraActive2")
         this.setState({cameraDrawerState: true,  weatherDrawerState: false},()=>{
           if(closeCameraDrawerFunction) clearInterval(closeCameraDrawerFunction)
           let funId = setTimeout(()=>{
-            this.setState({cameraDrawerState:false})
+            console.log("cameraActive3", closeCameraDrawerFunction)
+            this.setState({cameraDrawerState:false, weatherDrawerState: true})
             clearInterval(closeCameraDrawerFunction)
           },6000)
           this.setState({closeCameraDrawerFunction: funId})
