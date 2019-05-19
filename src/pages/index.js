@@ -42,6 +42,7 @@ const styles = theme => ({
   clock:{
     padding: theme.spacing.unit * 1,
     margin: theme.spacing.unit * 2,
+    fontSize: 120,
     borderBottom: "4px solid "+theme.palette.primary.main
   },
 
@@ -130,30 +131,34 @@ class Index extends React.Component {
       <div className={classes.root} onClick={this.toggleCameraDrawer}>
         <div style={{flex: 1, display:"flex", flexDirection:"column",height: "100%"}}>
           <div style={{flex: 1, display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <Typography  className={classes.clock} variant="h1">
+            <Typography style={cameraDrawerState ? {fontSize: 100, fontWeight: 400}:null}  className={classes.clock} variant="h1">
               <Clock format={'HH:mm'} ticking={true} timezone={'Europe/Vienna'} />
             </Typography>
-            <Fade in={cameraDrawerState}  mountOnEnter unmountOnExit>
-              <div  className={classes.column}>
 
-                <Typography variant="h1" align="center" style={{fontWeight: 400, padding: 32}}>
-                  {
-                    weatherData && Math.floor((weatherData.currently.temperature-32)/(9/5))
-                  }&deg;C
-                </Typography>
-                <div style={{textAlign:"center", fontSize: 110,}}>
-                  {
-                    Object.keys(weatherIconMap).map((key, i)=>{
-                      if(weatherData && key === weatherData.currently.icon){
-                        return(
-                          <i key={i} className={weatherIconMap[key]}></i>
-                        )
+              {
+                cameraDrawerState && (
+                  <div  className={classes.column}>
+
+                    <Typography variant="h1" align="center" style={{fontWeight: 400, padding: 32}}>
+                      {
+                        weatherData && Math.floor((weatherData.currently.temperature-32)/(9/5))
+                      }&deg;C
+                    </Typography>
+                    <div style={{textAlign:"center", fontSize: 110,}}>
+                      {
+                        Object.keys(weatherIconMap).map((key, i)=>{
+                          if(weatherData && key === weatherData.currently.icon){
+                            return(
+                              <i key={i} className={weatherIconMap[key]}></i>
+                            )
+                          }
+                        })
                       }
-                    })
-                  }
-                </div>
-              </div>
-            </Fade>
+                    </div>
+                  </div>
+                )
+              }
+
           </div>
           <DrawerContainerBottom anchor="bottom" height={200} open={weatherDrawerState}>
             <WeatherBar weatherData={weatherData}/>
