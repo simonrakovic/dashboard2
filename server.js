@@ -63,10 +63,11 @@ try{
 		pass 	: 'Nomis1992!',
 		log 	: true,
 	};
+
 	var hikvision 	= new ipcamera.hikvision(options);
 	hikvision.on('alarm', function(code,action,index) {
 		if (code === 'VideoMotion'   && action === 'Start'){
-			exec("xset s activate",(err)=>{console.log(err)})
+			exec("export DISPLAY=:0 && xset s reset && xset dpms force on",(err)=>{console.log(err)})
 			console.log(getDateTime() + ' Channel ' + index + ': Video Motion Detected')
 			sse.send({active:true});
 		}

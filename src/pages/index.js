@@ -14,10 +14,10 @@ import Clock from 'react-live-clock';
 import DrawerContainerBottom from './../components/DrawerContainerBottom'
 import DrawerContainer from './../components/DrawerContainer'
 import WeatherBar from './../components/WeatherBar'
-import CameraImageContainer from './../components/CameraImageContainer'
+
 import Slide from '@material-ui/core/Slide'
 import axios from 'axios'
-
+import jsmpeg from 'jsmpeg'
 import Fade from '@material-ui/core/Fade'
 
 const weatherIconMap = {
@@ -37,6 +37,7 @@ const styles = theme => ({
   root: {
     display:"flex",
     height: "100vh",
+    overflow: "hidden"
   },
 
   clock:{
@@ -100,6 +101,16 @@ class Index extends React.Component {
     this.getWeatherData()
     setInterval(()=>{this.getWeatherData()},300000)
 
+
+    let client = new WebSocket('ws://localhost:9999')
+    this.canvas.style.width = "100%"
+    this.canvas.style.height = "800px"
+    let player = new jsmpeg(client, {
+      canvas: this.canvas, // Canvas should be a canvas DOM element
+      videoBufferSize : 512*1024
+    })
+
+
   }
 
   getWeatherData(){
@@ -131,7 +142,7 @@ class Index extends React.Component {
       <div className={classes.root} onClick={this.toggleCameraDrawer}>
         <div style={{flex: 1, display:"flex", flexDirection:"column",height: "100%"}}>
           <div style={{flex: 1, display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <Typography style={cameraDrawerState ? {fontSize: 100, fontWeight: 400}:null}  className={classes.clock} variant="h1">
+            <Typography style={cameraDrawerState ? {fontSize: 100, fontWeight: 400} : null}  className={classes.clock} variant="h1">
               <Clock format={'HH:mm'} ticking={true} timezone={'Europe/Vienna'} />
             </Typography>
 
@@ -168,7 +179,11 @@ class Index extends React.Component {
 
         </div>
         <DrawerContainer open={cameraDrawerState}>
-          {cameraDrawerState && <CameraImageContainer />}
+          <div style={{height: "100vh",display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",  overflow: "hidden"}}>
+
+            <canvas ref={(ref)=> {this.canvas = ref}} width="100%" height="100vh"></canvas>
+
+          </div>
         </DrawerContainer>
       </div>
     );
