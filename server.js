@@ -8,7 +8,7 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var axios = require('axios');
 var fs = require('fs')
-
+var exec = require("child_process").exec
 var ipcamera	= require('./hikvision');
 var Scheduler = require('./scheduler')
 require('./rtspStreamServer')
@@ -66,6 +66,7 @@ try{
 	var hikvision 	= new ipcamera.hikvision(options);
 	hikvision.on('alarm', function(code,action,index) {
 		if (code === 'VideoMotion'   && action === 'Start'){
+			exec("xset s activate",(err)=>{console.log(err)})
 			console.log(getDateTime() + ' Channel ' + index + ': Video Motion Detected')
 			sse.send({active:true});
 		}
