@@ -90,7 +90,7 @@ class Index extends React.Component {
             console.log("cameraActive3", closeCameraDrawerFunction)
             this.setState({cameraDrawerState:false, weatherDrawerState: true})
             clearInterval(closeCameraDrawerFunction)
-          },6000)
+          },15000)
           this.setState({closeCameraDrawerFunction: funId})
         })
 
